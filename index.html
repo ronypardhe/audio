@@ -1,0 +1,91 @@
+<!--DOCTYPE HTML-->
+	<html>
+		<head>
+			<title>PhoneGap Camera</title>
+			
+			<style>
+				body{background:#000000;color:#ffffff;}
+				#recordBtn{
+						display:block;
+						border-radius:50%;
+						width:100px;
+						height:100px;
+						background:red;
+						color:#000000;
+						margin: 30px auto;
+				}
+			</style>
+			
+			<script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+			<script type="text/javascript" charset="utf-8" src="phonegap.js"></script>
+			<script type="text/javascript">
+				
+				
+				var audioCapture = '';
+				
+				<!--Wait for the phoneGap to load-->
+				document.addEventListener("deviceready",onDeviceReady,false);
+				
+				<!--PhoneGap is Ready-->
+				function onDeviceReady(){
+					audioCapture = navigator.device.capture;
+					
+					$('#recordBtn').bind('touchstart',function(){
+						getAudio();
+					
+					});
+				}
+				
+				function getAudio(){
+					audioCapture.captureAudio(onCaptureSuccess,onCaptureError,{limit: 1});
+				}
+				
+				function onCaptureSuccess(audioObject)
+				{
+					var i, output ='';
+					for(i=0;i<audioObject.length; i++)
+					{
+						output += 'Name: '+ audioObject[i].name + '<br />' +
+							'Full Path:  '+ audioObject[i].fullpath + '<br />' +
+							'Type:  '+ audioObject[i].type + '<br />' +
+							'Create On:  '+ new Date(audioObject[i].lastModifiedDate) + '<br />' +
+							'Size:  '+ audioObject[i].size + '<br />';							
+					}
+					$('#recordBtn').before(output);
+				}
+				
+				function onCaptureError(error)
+				{
+					var errMsg;
+					switch(error.code)
+					{
+						case 0:
+							errMsg = 'Mic failed to record';
+							break;
+							
+						case 1:
+							errMsg = 'Recording app is currently busy'
+							break;
+							
+						case 2:
+							errMsg = 'Invalid parameter';
+							break;
+							
+						case 3:
+							errMsg = 'App was exited before the recording was complete';
+							break;
+							
+						case 4:
+							errMsg = 'Device does not support the audio capture request';
+							break;
+					}
+					alert('Error: '+errMsg);
+				}
+				
+			</script>
+		
+		</head>
+		<body>
+			<button id="recordBtn">Record</button>
+		</body>
+	</html>
